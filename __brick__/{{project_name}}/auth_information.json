@@ -1,0 +1,1 @@
+{"version": 1, "serviceConfiguration": { "serviceName": "AppSync", "apiName": "{{project_name.camelCase()}}Api", "transformSchema": "type Todo @model @auth(rules: [{ allow: owner }]){\r\n  id: ID!\r\n  name: String!\r\n  description: String!\r\n isComplete: Boolean!\r\n}","defaultAuthType": {"mode": "API_KEY"}}}

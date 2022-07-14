@@ -4,12 +4,7 @@ import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:{{project_name.snakeCase()}}/models/ModelProvider.dart';
-import 'package:{{project_name.snakeCase()}}/profile/domain/remote_user_repository.dart';
-import 'package:{{project_name.snakeCase()}}/profile/domain/user_repository.dart';
-import 'package:{{project_name.snakeCase()}}/todos/domain/remote_todos_repository.dart';
-import 'package:{{project_name.snakeCase()}}/todos/domain/todos_repository.dart';
 import 'package:{{project_name.snakeCase()}}/todos/todos_list/ui/todos_page.dart';
 
 import 'amplifyconfiguration.dart';
