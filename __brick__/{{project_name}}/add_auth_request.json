@@ -1,0 +1,1 @@
+{"version": 1,"resourceName": "{{project_name.pascalCase()}}","serviceConfiguration": {"serviceName": "Cognito","userPoolConfiguration": {"signinMethod": "USERNAME","requiredSignupAttributes": ["EMAIL", "PHONE_NUMBER"]},"includeIdentityPool": true}}
