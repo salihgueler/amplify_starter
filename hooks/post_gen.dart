@@ -1,44 +1,56 @@
-import 'package:mason/mason.dart';
+
+import 'dart:convert';
 import 'dart:io';
 
-void run(HookContext context) {
-  print('Flutter pub get is called.');
+import 'package:mason/mason.dart';
+
+Future<void> run(HookContext context) async {
+  final flutterPubGetProgress = context.logger.progress(
+    'running "flutter pub get"',
+  );
   final result = Process.runSync(
     'flutter',
     ['pub', 'get'],
     workingDirectory: '{{project_name}}',
   );
-  print('Flutter pub get successfully finished ${result.exitCode}.');
 
-  print('Initializing Amplify please wait.');
+  flutterPubGetProgress.complete(
+    'Flutter pub get successfully finished ${result.exitCode}.',
+  );
+
+  final amplifyInitProgress = context.logger.progress(
+    'running "amplify init --yes"',
+  );
+
   final amplifyResult = Process.runSync(
     'amplify',
     ['init', '--yes'],
     workingDirectory: '{{project_name}}',
   );
-  print('Project is initialized. ${amplifyResult.exitCode}');
 
-  print('amplify auth is called on file.');
+  amplifyInitProgress.complete(
+    'Project is initialized. ${amplifyResult.exitCode}',
+  );
 
-  print('1. cat operation started');
+  final amplifyAddProgress = context.logger.progress(
+    'running "amplify add auth --headless"',
+  );
 
-  final executeResult = Process.runSync(
+  final catAddAuthRequest = await Process.start(
     'cat',
     ['add_auth_request.json'],
     workingDirectory: '{{project_name}}',
   );
 
-  print('1. cat operation finished');
-  print('cat is added ${executeResult.exitCode}.');
-  print('cat is added ${executeResult.stderr}.');
-
-  print('2 Amplify auth is called');
-  final authResult = Process.runSync(
+  final amplifyAddAuth = await Process.start(
     'amplify',
     ['add', 'auth', '--headless'],
     workingDirectory: '{{project_name}}',
   );
 
-  print('Auth is added ${authResult.exitCode}.');
-  print('Auth is added ${authResult.stderr}.');
+  catAddAuthRequest.stdout.pipe(amplifyAddAuth.stdin);
+
+  await amplifyAddAuth.stdout.pipe(stdout);
+  final exitCode = await amplifyAddAuth.exitCode;
+  amplifyAddProgress.complete('Added amplify auth $exitCode');
 }

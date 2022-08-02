@@ -1,13 +1,10 @@
-import 'package:mason/mason.dart';
 import 'dart:io';
+import 'package:mason/mason.dart';
 
-void run(HookContext context) {
-  final result = Process.runSync(
-    'which',
-    ['amplify'],
-  );
+Future<void> run(HookContext context) async {
+  final result = await Process.run('which', ['amplify']);
   if (result.exitCode != 0) {
-    stderr.write(result.stderr);
+    context.logger.err(result.stderr);
     exit(result.exitCode);
   }
 }
