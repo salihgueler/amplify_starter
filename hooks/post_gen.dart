@@ -1,5 +1,3 @@
-
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:mason/mason.dart';
@@ -48,9 +46,32 @@ Future<void> run(HookContext context) async {
     workingDirectory: '{{project_name}}',
   );
 
-  catAddAuthRequest.stdout.pipe(amplifyAddAuth.stdin);
+  await catAddAuthRequest.stdout.pipe(amplifyAddAuth.stdin);
 
-  await amplifyAddAuth.stdout.pipe(stdout);
   final exitCode = await amplifyAddAuth.exitCode;
   amplifyAddProgress.complete('Added amplify auth $exitCode');
+
+  final amplifyApiProgress = context.logger.progress(
+    'running "amplify add api --headless"',
+  );
+
+  final catAddApiRequest = await Process.start(
+    'cat',
+    ['add_api_request.json'],
+    workingDirectory: '{{project_name}}',
+  );
+
+  final amplifyAddApi = await Process.start(
+    'amplify',
+    ['add', 'api', '--headless'],
+    workingDirectory: '{{project_name}}',
+  );
+
+  await catAddApiRequest.stdout.pipe(amplifyAddApi.stdin);
+
+  final exitCodeApi = await amplifyAddApi.exitCode;
+  final event = await amplifyAddApi.stderr.first;
+  final decoded = systemEncoding.decode(event);
+
+  amplifyApiProgress.complete('Added amplify api $decoded');
 }
