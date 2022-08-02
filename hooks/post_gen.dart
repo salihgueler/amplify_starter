@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,6 +13,7 @@ Future<void> run(HookContext context) async {
     ['pub', 'get'],
     workingDirectory: '{{project_name}}',
   );
+
   flutterPubGetProgress.complete(
     'Flutter pub get successfully finished ${result.exitCode}.',
   );
@@ -19,11 +21,13 @@ Future<void> run(HookContext context) async {
   final amplifyInitProgress = context.logger.progress(
     'running "amplify init --yes"',
   );
+
   final amplifyResult = Process.runSync(
     'amplify',
     ['init', '--yes'],
     workingDirectory: '{{project_name}}',
   );
+
   amplifyInitProgress.complete(
     'Project is initialized. ${amplifyResult.exitCode}',
   );
