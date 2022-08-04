@@ -1,3 +1,2 @@
 .idea/
-hooks/.dart_tool
-hooks/.packages
+.DS_Store
