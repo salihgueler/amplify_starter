@@ -19,6 +19,16 @@ If you do not know how to do it, you can check the [official documentation](http
 
 ## How to use 🚀
 
+First create your mason project by running `mason init` on any folder that you want.
+
+Afterwards, add the library to your project.
+
+```shell
+mason add amplify_starter
+```
+
+Now generate the files. 
+
 You can either fill in the variables on your CLI:
 
 ```shell
