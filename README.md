@@ -9,6 +9,14 @@ The project uses:
 - [Amplify Datastore](https://pub.dev/packages/amplify_datastore) for saving data and real time updates
 - [bloc](https://pub.dev/packages/bloc) for state management.
 
+## Requirements 🚀
+
+Before you move forward, be sure to have 
+- your AWS Account created
+- Amplify CLI is installed.
+
+If you do not know how to do it, you can check the [official documentation](https://docs.amplify.aws/start/getting-started/installation/q/integration/flutter/) or this [blog post](https://medium.com/p/ef748798fdbf) for detailed guide.
+
 ## How to use 🚀
 
 You can either fill in the variables on your CLI:
@@ -24,12 +32,6 @@ let CLI guide you through the process
 ```shell
 mason make amplify_starter
 ```
-
------
-
-> This project creates the base project for you. You are still expected to configure AWS Amplify afterwards. 
-> 
-> Once the project is created go to the [README.md](https://github.com/salihgueler/amplify_starter/blob/main/__brick__/%7B%7Bproject_name%7D%7D/README.md) file of the generated project and follow the steps described there.
 
 ## Variables ✨
 

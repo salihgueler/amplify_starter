@@ -31,11 +31,11 @@ dependencies:
     sdk: flutter
 
   # Amplify Libraries
-  amplify_flutter: ^0.6.1
-  amplify_datastore: ^0.6.1
-  amplify_authenticator: ^0.2.1
-  amplify_auth_cognito: ^0.6.1
-  amplify_api: ^0.6.1
+  amplify_flutter: ^0.6.5
+  amplify_datastore: ^0.6.5
+  amplify_authenticator: ^0.2.2
+  amplify_auth_cognito: ^0.6.5
+  amplify_api: ^0.6.5
 
   # Bloc libraries
   equatable: ^2.0.3
