@@ -55,16 +55,18 @@ Future<void> _runAmplifyInit(HookContext context) async {
     'amplify',
     ['init', '--yes'],
     workingDirectory: '{{project_name}}',
+    mode: ProcessStartMode.inheritStdio,
   );
+
+  // Complete progress so it doesn't interfere with stdout of `amplify`
+  amplifyInitProgress.complete();
 
   final exitCode = await result.exitCode;
 
   if (exitCode == 0) {
-    amplifyInitProgress.complete('Project is initialized.');
+    context.logger.success('Project is initialized.');
   } else {
-    final errorBytes = await result.stderr.first;
-    final error = systemEncoding.decode(errorBytes);
-    amplifyInitProgress.complete('Project initialization failed. $error');
+    context.logger.err('Project initialization failed.');
     exit(exitCode);
   }
 }
@@ -166,20 +168,21 @@ Future<void> _runAmplifyPush(HookContext context, String input) async {
       'running "amplify push"',
     );
 
-    final result = Process.runSync(
+    final result = await Process.start(
       'amplify',
       ['push', '--yes'],
       workingDirectory: '{{project_name}}',
+      mode: ProcessStartMode.inheritStdio,
     );
+
+    amplifyPushProgress.complete();
 
     final exitCode = await result.exitCode;
 
     if (exitCode == 0) {
-      amplifyPushProgress.complete('Backend is pushed');
+      context.logger.success('Backend is pushed');
     } else {
-      final errorBytes = await result.stderr.first;
-      final error = systemEncoding.decode(errorBytes);
-      amplifyPushProgress.complete('Backend push is failed. $error');
+      context.logger.err('Backend push failed.');
       exit(exitCode);
     }
   } else {
