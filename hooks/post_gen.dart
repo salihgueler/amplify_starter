@@ -22,44 +22,50 @@ Future<void> run(HookContext context) async {
   _runAmplifyPush(context, input);
 }
 
-void _runFlutterPubGet(HookContext context) {
+Future<void> _runFlutterPubGet(HookContext context) async {
   final flutterPubGetProgress = context.logger.progress(
     'running "flutter pub get"',
   );
-  final result = Process.runSync(
+  final result = await Process.start(
     'flutter',
     ['pub', 'get'],
     workingDirectory: '{{project_name}}',
   );
 
-  if (result.exitCode == 0) {
+  final exitCode = await result.exitCode;
+
+  if (exitCode == 0) {
     flutterPubGetProgress.complete('Flutter pub get successfully finished.');
   } else {
+    final errorBytes = await result.stderr.first;
+    final error = systemEncoding.decode(errorBytes);
     flutterPubGetProgress.complete(
-      'Flutter pub get had an error ${result.stderr}.',
+      'Flutter pub get had an error $error.',
     );
-    exit(result.exitCode);
+    exit(exitCode);
   }
 }
 
-void _runAmplifyInit(HookContext context) {
+Future<void> _runAmplifyInit(HookContext context) async {
   final amplifyInitProgress = context.logger.progress(
     'running "amplify init --yes"',
   );
 
-  final amplifyResult = Process.runSync(
+  final result = await Process.start(
     'amplify',
     ['init', '--yes'],
     workingDirectory: '{{project_name}}',
   );
 
-  if (amplifyResult.exitCode == 0) {
+  final exitCode = await result.exitCode;
+
+  if (exitCode == 0) {
     amplifyInitProgress.complete('Project is initialized.');
   } else {
-    amplifyInitProgress.complete(
-      'Project initialization failed. ${amplifyResult.stderr}',
-    );
-    exit(amplifyResult.exitCode);
+    final errorBytes = await result.stderr.first;
+    final error = systemEncoding.decode(errorBytes);
+    amplifyInitProgress.complete('Project initialization failed. $error');
+    exit(exitCode);
   }
 }
 
@@ -125,49 +131,57 @@ Future<void> _runAmplifyAddApi(HookContext context) async {
   }
 }
 
-void _runAmplifyCodegen(HookContext context) {
+Future<void> _runAmplifyCodegen(HookContext context) async {
   final amplifyCodegenProgress = context.logger.progress(
     'running "amplify codegen models"',
   );
 
-  final amplifyCodegenResult = Process.runSync(
+  final result = await Process.start(
     'amplify',
     ['codegen', 'models'],
     workingDirectory: '{{project_name}}',
   );
 
-  if (amplifyCodegenResult.exitCode == 0) {
+  final exitCode = await result.exitCode;
+
+  if (exitCode == 0) {
     amplifyCodegenProgress.complete(
       'Models are created.',
     );
   } else {
-    amplifyCodegenProgress.complete(
-      'Model creation failed. ${amplifyCodegenResult.stderr}',
-    );
-    exit(amplifyCodegenResult.exitCode);
+    final errorBytes = await result.stderr.first;
+    final error = systemEncoding.decode(errorBytes);
+    amplifyCodegenProgress.complete('Model creation failed. $error');
+    exit(exitCode);
   }
 }
 
-void _runAmplifyPush(HookContext context, String input) {
+Future<void> _runAmplifyPush(HookContext context, String input) async {
   if (input.isEmpty || input == 'Y' || input == 'y') {
     stdout.writeln(
       '\nRunning "amplify push", do not close the terminal until it is finished.',
     );
-    final amplifyCodegenProgress = context.logger.progress(
+
+    final amplifyPushProgress = context.logger.progress(
       'running "amplify push"',
     );
 
-    final amplifyCodegenResult = Process.runSync(
+    final result = Process.runSync(
       'amplify',
       ['push', '--yes'],
       workingDirectory: '{{project_name}}',
     );
 
-    amplifyCodegenProgress.complete(
-      amplifyCodegenResult.exitCode == 0
-          ? 'Backend is pushed.'
-          : 'Something went wrong: ${amplifyCodegenResult.stderr}',
-    );
+    final exitCode = await result.exitCode;
+
+    if (exitCode == 0) {
+      amplifyPushProgress.complete('Backend is pushed');
+    } else {
+      final errorBytes = await result.stderr.first;
+      final error = systemEncoding.decode(errorBytes);
+      amplifyPushProgress.complete('Backend push is failed. $error');
+      exit(exitCode);
+    }
   } else {
     stdout.writeln(
       'Do not forget to push your changes to the cloud by running "amplify push"',
