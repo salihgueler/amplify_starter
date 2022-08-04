@@ -3,6 +3,26 @@ import 'dart:io';
 import 'package:mason/mason.dart';
 
 Future<void> run(HookContext context) async {
+  _runFlutterPubGet(context);
+
+  _runAmplifyInit(context);
+
+  _runAmplifyAddAuth(context);
+
+  _runAmplifyAddApi(context);
+
+  _runAmplifyCodegen(context);
+
+  stdout.writeln("Do you want to push your changes to the cloud now?");
+  stdout.write(
+    "This might take couple of minutes (between 5-10 minutes) and you can do it any time by running 'amplify push': (Y/n)",
+  );
+  final input = stdin.readLineSync() ?? '';
+
+  _runAmplifyPush(context, input);
+}
+
+void _runFlutterPubGet(HookContext context) {
   final flutterPubGetProgress = context.logger.progress(
     'running "flutter pub get"',
   );
@@ -12,10 +32,17 @@ Future<void> run(HookContext context) async {
     workingDirectory: '{{project_name}}',
   );
 
-  flutterPubGetProgress.complete(
-    'Flutter pub get successfully finished ${result.exitCode}.',
-  );
+  if (result.exitCode == 0) {
+    flutterPubGetProgress.complete('Flutter pub get successfully finished.');
+  } else {
+    flutterPubGetProgress.complete(
+      'Flutter pub get had an error ${result.stderr}.',
+    );
+    exit(result.exitCode);
+  }
+}
 
+void _runAmplifyInit(HookContext context) {
   final amplifyInitProgress = context.logger.progress(
     'running "amplify init --yes"',
   );
@@ -26,10 +53,17 @@ Future<void> run(HookContext context) async {
     workingDirectory: '{{project_name}}',
   );
 
-  amplifyInitProgress.complete(
-    'Project is initialized. ${amplifyResult.exitCode}',
-  );
+  if (amplifyResult.exitCode == 0) {
+    amplifyInitProgress.complete('Project is initialized.');
+  } else {
+    amplifyInitProgress.complete(
+      'Project initialization failed. ${amplifyResult.stderr}',
+    );
+    exit(amplifyResult.exitCode);
+  }
+}
 
+Future<void> _runAmplifyAddAuth(HookContext context) async {
   final amplifyAddProgress = context.logger.progress(
     'running "amplify add auth --headless"',
   );
@@ -49,8 +83,18 @@ Future<void> run(HookContext context) async {
   await catAddAuthRequest.stdout.pipe(amplifyAddAuth.stdin);
 
   final exitCode = await amplifyAddAuth.exitCode;
-  amplifyAddProgress.complete('Added amplify auth $exitCode');
 
+  if (exitCode == 0) {
+    amplifyAddProgress.complete('Amplify Auth added.');
+  } else {
+    final errorBytes = await amplifyAddAuth.stderr.first;
+    final error = systemEncoding.decode(errorBytes);
+    amplifyAddProgress.complete('Amplify Auth failed to be added. $error');
+    exit(exitCode);
+  }
+}
+
+Future<void> _runAmplifyAddApi(HookContext context) async {
   final amplifyApiProgress = context.logger.progress(
     'running "amplify add api --headless"',
   );
@@ -70,8 +114,63 @@ Future<void> run(HookContext context) async {
   await catAddApiRequest.stdout.pipe(amplifyAddApi.stdin);
 
   final exitCodeApi = await amplifyAddApi.exitCode;
-  final event = await amplifyAddApi.stderr.first;
-  final decoded = systemEncoding.decode(event);
 
-  amplifyApiProgress.complete('Added amplify api $decoded');
+  if (exitCodeApi == 0) {
+    amplifyApiProgress.complete('Amplify API added.');
+  } else {
+    final errorBytes = await amplifyAddApi.stderr.first;
+    final error = systemEncoding.decode(errorBytes);
+    amplifyApiProgress.complete('Amplify API failed to be added. $error');
+    exit(exitCodeApi);
+  }
+}
+
+void _runAmplifyCodegen(HookContext context) {
+  final amplifyCodegenProgress = context.logger.progress(
+    'running "amplify codegen models"',
+  );
+
+  final amplifyCodegenResult = Process.runSync(
+    'amplify',
+    ['codegen', 'models'],
+    workingDirectory: '{{project_name}}',
+  );
+
+  if (amplifyCodegenResult.exitCode == 0) {
+    amplifyCodegenProgress.complete(
+      'Models are created.',
+    );
+  } else {
+    amplifyCodegenProgress.complete(
+      'Model creation failed. ${amplifyCodegenResult.stderr}',
+    );
+    exit(amplifyCodegenResult.exitCode);
+  }
+}
+
+void _runAmplifyPush(HookContext context, String input) {
+  if (input.isEmpty || input == 'Y' || input == 'y') {
+    stdout.writeln(
+      '\nRunning "amplify push", do not close the terminal until it is finished.',
+    );
+    final amplifyCodegenProgress = context.logger.progress(
+      'running "amplify push"',
+    );
+
+    final amplifyCodegenResult = Process.runSync(
+      'amplify',
+      ['push', '--yes'],
+      workingDirectory: '{{project_name}}',
+    );
+
+    amplifyCodegenProgress.complete(
+      amplifyCodegenResult.exitCode == 0
+          ? 'Backend is pushed.'
+          : 'Something went wrong: ${amplifyCodegenResult.stderr}',
+    );
+  } else {
+    stdout.writeln(
+      'Do not forget to push your changes to the cloud by running "amplify push"',
+    );
+  }
 }
