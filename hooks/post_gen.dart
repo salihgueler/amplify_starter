@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:mason/mason.dart';
 
 Future<void> run(HookContext context) async {
-  _runFlutterPubGet(context);
+  await _runFlutterPubGet(context);
 
-  _runAmplifyInit(context);
+  await _runAmplifyInit(context);
 
-  _runAmplifyAddAuth(context);
+  await _runAmplifyAddAuth(context);
 
-  _runAmplifyAddApi(context);
+  await _runAmplifyAddApi(context);
 
-  _runAmplifyCodegen(context);
+  await _runAmplifyCodegen(context);
 
   stdout.writeln("Do you want to push your changes to the cloud now?");
   stdout.write(
