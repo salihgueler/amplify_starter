@@ -1,3 +1,6 @@
+# 0.2.2
+- Improve error recording while calling the amplify services
+
 # 0.2.1
 - Update README.md to have proper steps
 
