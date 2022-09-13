@@ -29,7 +29,7 @@ Future<void> _runFlutterPubGet(HookContext context) async {
   final result = await Process.start(
     'flutter',
     ['pub', 'get'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
   );
 
   final exitCode = await result.exitCode;
@@ -54,7 +54,7 @@ Future<void> _runAmplifyInit(HookContext context) async {
   final result = await Process.start(
     'amplify',
     ['init', '--yes'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
     mode: ProcessStartMode.inheritStdio,
   );
 
@@ -79,13 +79,13 @@ Future<void> _runAmplifyAddAuth(HookContext context) async {
   final catAddAuthRequest = await Process.start(
     'cat',
     ['add_auth_request.json'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
   );
 
   final amplifyAddAuth = await Process.start(
     'amplify',
     ['add', 'auth', '--headless'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
   );
 
   await catAddAuthRequest.stdout.pipe(amplifyAddAuth.stdin);
@@ -110,13 +110,13 @@ Future<void> _runAmplifyAddApi(HookContext context) async {
   final catAddApiRequest = await Process.start(
     'cat',
     ['add_api_request.json'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
   );
 
   final amplifyAddApi = await Process.start(
     'amplify',
     ['add', 'api', '--headless'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
   );
 
   await catAddApiRequest.stdout.pipe(amplifyAddApi.stdin);
@@ -141,7 +141,7 @@ Future<void> _runAmplifyCodegen(HookContext context) async {
   final result = await Process.start(
     'amplify',
     ['codegen', 'models'],
-    workingDirectory: '{{project_name}}',
+    workingDirectory: context.vars['project_name'],
   );
 
   final exitCode = await result.exitCode;
@@ -171,7 +171,7 @@ Future<void> _runAmplifyPush(HookContext context, String input) async {
     final result = await Process.start(
       'amplify',
       ['push', '--yes'],
-      workingDirectory: '{{project_name}}',
+      workingDirectory: context.vars['project_name'],
       mode: ProcessStartMode.inheritStdio,
     );
 
