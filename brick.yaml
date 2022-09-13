@@ -2,7 +2,7 @@ name: amplify_starter
 description: A highly opinionated AWS Amplify starter project with Authenticator, Amplify Datastore and bloc state management.
 repository: https://github.com/salihgueler/amplify_starter
 
-version: 0.2.2
+version: 0.3.0
 
 environment:
   mason: ">=0.1.0-dev.26 <0.1.0"
