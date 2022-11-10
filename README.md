@@ -1,13 +1,8 @@
 # AWS Amplify Starter Project
 
-[![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
+[![Powered by Mason][mason_badge]][mason_link]
 
-A highly opinionated AWS Amplify starter project. It will work as a Todo application. 
-
-The project uses:
-- [Amplify Authenticator](https://pub.dev/packages/amplify_authenticator), for authentication
-- [Amplify Datastore](https://pub.dev/packages/amplify_datastore) for saving data and real time updates
-- [bloc](https://pub.dev/packages/bloc) for state management.
+A highly opinionated AWS Amplify starter project. Based on Very Good Core. 
 
 ## Requirements 🚀
 
@@ -32,7 +27,7 @@ Now generate the files.
 You can either fill in the variables on your CLI:
 
 ```shell
-mason make amplify_starter --project_name "AWS Amplify Todo" --project_organization "com.example"
+mason make amplify_starter --project_name "AWS Amplify Starter" --project_organization "com.example"
 ```
 
 **OR**
@@ -51,3 +46,5 @@ mason make amplify_starter
 | `project_organization` | Organization of your project | com.example     | `string` |
 
 
+[mason_badge]: https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge
+[mason_link]: https://github.com/felangel/mason
